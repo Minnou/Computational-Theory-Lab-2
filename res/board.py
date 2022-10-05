@@ -8,11 +8,14 @@ from res.mountain import Mountain
 from res.cursor import Cursor
 from res.unit import Unit
 from res.spearmen import Spearmen
+from res.player_base import Base
+
 class Board:
     __terrain = [[]] # слой объектов
     __units = [[]] # слой юнитов
     __var_terrain = [Swamp(), Mountain()] # варианты объектов
     __max_objects = [] # максимальное количество объектов
+    __base = Base()
     #Конструктор класса
     def __init__(self, height, width, landscape, max_swamps, max_mountains):
         self.__height = height
@@ -34,8 +37,7 @@ class Board:
     def generate_board(self):
         self.__terrain = [[Border()]* (self.width +2) for i in range(self.height + 2)]
         self.__units = [[None]* (self.width +2) for i in range(self.height + 2)]
-        self.__units[2][3] = Spearmen() 
-        self.__units[5][1] = Spearmen() 
+        self.__units[1][1] = self.__base
         for i in range(1, self.__height+1):
             for j in range(1, self.__width+1):
                 self.__terrain[i][j] = self.__landscape #по-умолчанию  клетка - объект ландшафта
@@ -93,6 +95,13 @@ class Board:
     def move_unit_down(self,unit):
         self._move_unit(unit,self.cursor.x, self.cursor.y + 1)
     
+    def base_show_units(self):
+        self.__base.print()
+    def base_recruit_unit(self):
+        self.__base.recruit_unit()
+    def base_unit_to_field(self):
+        unit = self.__base.remove_unit()
+        self.__units[1][2] = unit
     #Метод вывода поля на экран
     def display_board(self):
         board = ""
@@ -106,6 +115,6 @@ class Board:
                     else:
                         board = board + self.cursor.to_string()
             board = board + "\n"
-        if not(self.__units[self.cursor.y][self.cursor.x] is None):
+        if not(self.__units[self.cursor.y][self.cursor.x] is None) and not(isinstance(self.__units[self.cursor.y][self.cursor.x], Base)):
             board = board + "Юнит " + self.__units[self.cursor.y][self.cursor.x].to_string() + "под курсором\n" 
         print(board)

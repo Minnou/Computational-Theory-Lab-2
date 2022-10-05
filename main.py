@@ -1,8 +1,9 @@
 from time import sleep
 from res.board import Board
 from res.field import Field
-from res.field import Field
 import keyboard
+
+from res.player_base import Base
 
 def clear_console():
     print("\033[H\033[J", end="")
@@ -34,7 +35,7 @@ board.generate_board()
 board.display_board()
 while (True):
     key = keyboard.read_key()
-    print("\033[H\033[J", end="")   
+    clear_console()  
     if (key == "esc"):
         break
     # Событие - нажатие клавиши "4", курсор двигается влево
@@ -52,7 +53,7 @@ while (True):
     elif key == "enter":
         sleep(0.1)
         unit = board.get_unit()
-        if not(unit is None):
+        if not(unit is None) and not(isinstance(unit, Base)):
             clear_console()
             board.display_board()
             print("w - движение\ns - способность")
@@ -62,5 +63,18 @@ while (True):
                 sleep(0.1)
                 unit_control(unit)
             clear_console()
+        elif(isinstance(unit, Base)):
+            clear_console()
+            print("w - вывести юнит на поле\nr - нанять юнит")
+            board.base_show_units()
+            key = keyboard.read_key()
+            # Событие - нажатие клавиши "w"
+            if key == "w":
+                sleep(0.1)
+                board.base_unit_to_field()
+            elif key == "r":
+                sleep(0.1)
+                board.base_recruit_unit()
+            
     sleep(0.1)
     board.display_board()
