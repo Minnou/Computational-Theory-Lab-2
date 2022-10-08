@@ -1,8 +1,9 @@
 from time import sleep
 from res.board import Board
 from res.field import Field
+from res.unit import Unit
 import keyboard
-
+from res.unit_enum_factory import Units
 from res.player_base import Base
 
 def clear_console():
@@ -14,7 +15,7 @@ def unit_control(unit):
         board.display_board()
         print("q - отмена")
         key = keyboard.read_key()
-        if (key == "q"):
+        if (key == "q" or key == "й"):
             break
         # Событие - нажатие клавиши "4", курсор и юнит двигается влево
         elif key == "4":
@@ -30,12 +31,33 @@ def unit_control(unit):
             board.move_unit_down(unit)
         sleep(0.1)
 
+def base_control():
+    while(True):
+                clear_console()
+                print("w - вывести юнит на поле\nr - нанять юнит\nq - отмена")
+                board.base_show_units()
+                board.display_board()
+                key = keyboard.read_key()
+                # Событие - нажатие клавиши "w"
+                if key == "w" or key == "ц":
+                    sleep(0.1)
+                    board.base_unit_to_field()
+                elif key == "r" or key == "к":
+                    sleep(0.1)
+                    for pos_unit in Units:
+                        print(str(pos_unit.value) + ". " + pos_unit.name)
+                    key = keyboard.read_key()
+                    sleep(0.1)
+                    board.base_recruit_unit(Units(int(key)))
+                elif key == "q" or key =="й":
+                    sleep(0.1)
+                    break
+
 board = Board(20, 20,Field(),10, 7)
 board.generate_board()
 board.display_board()
 while (True):
-    key = keyboard.read_key()
-    clear_console()  
+    key = keyboard.read_key() 
     if (key == "esc"):
         break
     # Событие - нажатие клавиши "4", курсор двигается влево
@@ -53,28 +75,17 @@ while (True):
     elif key == "enter":
         sleep(0.1)
         unit = board.get_unit()
-        if not(unit is None) and not(isinstance(unit, Base)):
+        if (isinstance(unit, Unit)):
             clear_console()
             board.display_board()
             print("w - движение\ns - способность")
             key = keyboard.read_key()
             # Событие - нажатие клавиши "w", берём контроль над юнитом
-            if key == "w":
+            if key == "w" or key == "ц":
                 sleep(0.1)
                 unit_control(unit)
-            clear_console()
         elif(isinstance(unit, Base)):
-            clear_console()
-            print("w - вывести юнит на поле\nr - нанять юнит")
-            board.base_show_units()
-            key = keyboard.read_key()
-            # Событие - нажатие клавиши "w"
-            if key == "w":
-                sleep(0.1)
-                board.base_unit_to_field()
-            elif key == "r":
-                sleep(0.1)
-                board.base_recruit_unit()
-            
+            base_control()
+    clear_console()
     sleep(0.1)
     board.display_board()

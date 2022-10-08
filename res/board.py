@@ -96,12 +96,19 @@ class Board:
         self._move_unit(unit,self.cursor.x, self.cursor.y + 1)
     
     def base_show_units(self):
-        self.__base.print()
-    def base_recruit_unit(self):
-        self.__base.recruit_unit()
+        self.__base.print_base_units()
+    def base_recruit_unit(self,unit):
+        self.__base.recruit_unit(unit)
     def base_unit_to_field(self):
-        unit = self.__base.remove_unit()
-        self.__units[1][2] = unit
+        if (self.__units[1][2] is None or self.__units[2][2] is None or self.__units[2][1] is None):
+            unit = self.__base.remove_unit()
+            if self.__units[1][2] is None:
+                self.__units[1][2] = unit
+            elif self.__units[2][1] is None:
+                self.__units[2][1] = unit
+            elif self.__units[2][2] is None:
+                self.__units[2][2] = unit
+    
     #Метод вывода поля на экран
     def display_board(self):
         board = ""
@@ -116,5 +123,5 @@ class Board:
                         board = board + self.cursor.to_string()
             board = board + "\n"
         if not(self.__units[self.cursor.y][self.cursor.x] is None) and not(isinstance(self.__units[self.cursor.y][self.cursor.x], Base)):
-            board = board + "Юнит " + self.__units[self.cursor.y][self.cursor.x].to_string() + "под курсором\n" 
+            board = board + "Юнит " + self.__units[self.cursor.y][self.cursor.x].name + "под курсором\n" 
         print(board)
