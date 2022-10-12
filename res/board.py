@@ -9,6 +9,8 @@ from res.cursor import Cursor
 from res.unit import Unit
 from res.spearmen import Spearmen
 from res.player_base import Base
+import pickle
+
 
 class Board:
     __terrain = [[]] # слой объектов
@@ -123,5 +125,14 @@ class Board:
                         board = board + self.cursor.to_string()
             board = board + "\n"
         if not(self.__units[self.cursor.y][self.cursor.x] is None) and not(isinstance(self.__units[self.cursor.y][self.cursor.x], Base)):
-            board = board + "Юнит " + self.__units[self.cursor.y][self.cursor.x].name + "под курсором\n" 
+            board = board + "Юнит " + self.__units[self.cursor.y][self.cursor.x].name + " под курсором\n" 
         print(board)
+    #методы сохранения и загрузки игррового поля
+    def save_board(self):
+        pickle.dump(self, open("saves/board.pickle", "wb"))
+        self.__base.save_base()
+    @staticmethod
+    def load_board():
+        board = pickle.load(open("saves/board.pickle", "rb"))
+        board.__base.load_base()
+        return board

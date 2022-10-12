@@ -43,12 +43,13 @@ def base_control():
                     sleep(0.1)
                     board.base_unit_to_field()
                 elif key == "r" or key == "к":
-                    sleep(0.1)
+                    sleep(0.2)
                     for pos_unit in Units:
                         print(str(pos_unit.value) + ". " + pos_unit.name)
                     key = keyboard.read_key()
                     sleep(0.1)
-                    board.base_recruit_unit(Units(int(key)))
+                    if len(Units._member_names_) >= int(key) and int(key) > 0:  
+                        board.base_recruit_unit(Units(int(key)))
                 elif key == "q" or key =="й":
                     sleep(0.1)
                     break
@@ -56,6 +57,7 @@ def base_control():
 board = Board(20, 20,Field(),10, 7)
 board.generate_board()
 board.display_board()
+print("m - сохранить поле\no - загрузить поле")
 while (True):
     key = keyboard.read_key() 
     if (key == "esc"):
@@ -86,6 +88,11 @@ while (True):
                 unit_control(unit)
         elif(isinstance(unit, Base)):
             base_control()
+    elif key == "m" or key == "ь":
+        Board.save_board(board)
+    elif key == "o" or key == "щ":
+        board = Board.load_board()
     clear_console()
     sleep(0.1)
     board.display_board()
+    print("m - сохранить поле\no - загрузить поле")

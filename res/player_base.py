@@ -1,10 +1,11 @@
 from res.unit_enum_factory import UnitFactory
+import pickle
 
 class Base():
 
     __units = []
     __symbol = "B"
-
+    
     def recruit_unit(self, unit):
         self.__units.append(UnitFactory.CreateUnit(unit))
 
@@ -24,3 +25,8 @@ class Base():
     def to_string(self):
         return "\033[36m{}".format(self.__symbol) + " "
     
+    def save_base(self):
+        pickle.dump(self.__units, open("saves/base.pickle", "wb"))
+    def load_base(self):
+        units = pickle.load(open("saves/base.pickle", "rb"))  
+        self.__units = units
