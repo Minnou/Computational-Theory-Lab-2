@@ -1,10 +1,9 @@
 class Terrain:
-    __symbol = ""
-    __temp_hp = 0
-    __temp_hit =0
+    __symbol = "" #Символ ландшафта на поле
+    __temp_hp = 0 #Изменение здоровья юнита
+    __temp_hit =0 #Изменение атаки юнита
 
     def change_unit(self, unit):
-        unit.hp = unit.__base_hp + self.__temp_hp
-        unit.hp = unit.__base_hit + self.__temp_hit
+        unit.change_unit(self.__temp_hp, self.__temp_hit)
     def to_string(self):
         return self.__symbol + " "

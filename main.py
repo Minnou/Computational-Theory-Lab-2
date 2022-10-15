@@ -7,6 +7,10 @@ from res.unit_enum_factory import Units
 from res.player_base import Base
 from res.object_enum_factory import Objects
 
+#Управление в игре осуществляется цифрами 8 4 6 2 на нумпаде
+#И клавишей энтер
+
+#Ввод параметра размера игрового поля
 def size_param():
     a = (int)(input())
     if a < 3:
@@ -14,7 +18,7 @@ def size_param():
         size_param()
     else:
         return a
-
+#Ввод параметра максимального количества объектов опред. вида
 def ter_param(width,height):
     z = (int)(input())
     if z > width*height/4:
@@ -24,7 +28,7 @@ def ter_param(width,height):
         print("Число должно быть больше 0")
         ter_param(width,height)
     return z
-
+#Ввод всех параметров поля и его генерация
 def generate():
     print("Желаете загрузить поле?[y/n]")
     answer = input()
@@ -50,10 +54,10 @@ def generate():
 
 board = generate()
 board.display_board()
-
+#Функция очистки консоли
 def clear_console():
     print("\033[H\033[J", end="")
-
+#Функция управления юнитом
 def unit_control(unit):
     while (True):
         clear_console()
@@ -75,7 +79,7 @@ def unit_control(unit):
         elif key == "2":
             board.move_unit_down(unit)
         sleep(0.1)
-
+#Функция управления базой
 def base_control():
     while(True):
                 clear_console()
@@ -83,14 +87,16 @@ def base_control():
                 board.base_show_units()
                 board.display_board()
                 key = keyboard.read_key()
-                # Событие - нажатие клавиши "w"
+                # Событие - нажатие клавиши "w" выводит юнит на поле
                 if key == "w" or key == "ц":
                     sleep(0.1)
                     board.base_unit_to_field()
+                #Найм юнита
                 elif key == "r" or key == "к":
                     sleep(0.2)
-                    for pos_unit in Units:
-                        print(str(pos_unit.value) + ". " + pos_unit.name)
+                    #Вывод всех юнитов из перечисления юнитов
+                    for possible_unit in Units:
+                        print(str(possible_unit.value) + ". " + possible_unit.name)
                     key = keyboard.read_key()
                     sleep(0.1)
                     if(key.isdigit()):  
@@ -99,7 +105,8 @@ def base_control():
                 elif key == "q" or key =="й":
                     sleep(0.1)
                     break
-
+#Функция редактирования поля
+#(можно менять ландшафт и объекты)
 def place_objects():
     while (True):
         key = keyboard.read_key() 
@@ -118,8 +125,10 @@ def place_objects():
         # Событие - нажатие клавиши "2", курсор двигается вниз
         elif key == "2":
             board.move_cursor_down()
+        #Редактирование поля 
         elif key == "enter":
             sleep(0.1)
+            #Вывод всех объектов из перечисления объектов
             for pos_object in Objects:
                 print(str(pos_object.value) + ". " + pos_object.name)
             key = keyboard.read_key()
@@ -135,6 +144,7 @@ def place_objects():
 place_objects()
 clear_console()
 board.display_board()
+#Основной игровой цикл
 while (True):
     key = keyboard.read_key() 
     if (key == "esc"):
@@ -151,6 +161,7 @@ while (True):
     # Событие - нажатие клавиши "2", курсор двигается вниз
     elif key == "2":
         board.move_cursor_down()
+    #Энтер выбирает либо юнит под курсором либо базу под курсором
     elif key == "enter":
         sleep(0.1)
         unit = board.get_unit()
@@ -165,6 +176,7 @@ while (True):
                 unit_control(unit)
         elif(isinstance(unit, Base)):
             base_control()
+    #Сохранение и загрузка поля
     elif key == "m" or key == "ь":
         Board.save_board(board)
     elif key == "o" or key == "щ":

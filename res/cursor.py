@@ -1,8 +1,9 @@
 class Cursor():
-    __symbol = "X"
+    __symbol = "X" # символ курсора
+    #конструктор
     def __init__(self,x,y):
-        self.__x = x
-        self.__y = y
+        self.__x = x #координаты x
+        self.__y = y #и y
     
     #геттеры и сеттеры для координат курсора
     @property    

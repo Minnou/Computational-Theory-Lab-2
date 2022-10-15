@@ -3,9 +3,9 @@ import pickle
 
 class Base():
 
-    __units = []
-    __symbol = "B"
-    __max_unit_amount = 4
+    __units = [] # список юнитов
+    __symbol = "B" # символ базы на поле
+    __max_unit_amount = 4 # максимальное количество юнитов в базе
 
     def recruit_unit(self, unit):
         if (len(self.__units) < self.__max_unit_amount):

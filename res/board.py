@@ -18,18 +18,18 @@ class Board:
     __var_neutral = [Wise_Mythical_Tree(), Magic_Pebble(), Mighteous_Log()] # варианты нейтральных объектов
     __max_terrain_objects = [] # максимальное количество объектов ландшафта
     __max_neutral_objects = [] # максимальное количество нейтральных объектов
-    __base = Base()
+    __base = Base() #объект базы
     #Конструктор класса
     def __init__(self, height, width, landscape, max_swamps, max_mountains,max_tree,max_stone,max_log):
-        self.__height = height
-        self.__width = width
-        self.__landscape = landscape
-        self.__max_terrain_objects.append(max_swamps)
-        self.__max_terrain_objects.append(max_mountains)
-        self.__max_neutral_objects.append(max_tree)
-        self.__max_neutral_objects.append(max_stone)
-        self.__max_neutral_objects.append(max_log)
-        self.cursor = Cursor(1,1) # создание курсора
+        self.__height = height #задаём высоту
+        self.__width = width #ширину
+        self.__landscape = landscape #стандартный объект ландшафта
+        self.__max_terrain_objects.append(max_swamps) #максимальное количество болот
+        self.__max_terrain_objects.append(max_mountains) #гор
+        self.__max_neutral_objects.append(max_tree) #деревьев
+        self.__max_neutral_objects.append(max_stone) #камней
+        self.__max_neutral_objects.append(max_log) # и брёвен
+        self.cursor = Cursor(1,1) # создание курсора на координатах 1 1
     
     #Геттеры высоты и ширины поля
     @property
@@ -108,7 +108,7 @@ class Board:
     
     def move_unit_down(self,unit):
         self._move_unit(unit,self.cursor.x, self.cursor.y + 1)
-    
+    #Методы работы с базой
     def base_show_units(self):
         self.__base.print_base_units()
     def base_recruit_unit(self,unit):
@@ -151,6 +151,6 @@ class Board:
         board = pickle.load(open("saves/board.pickle", "rb"))
         board.__base.load_base()
         return board
-    
+    #Метод для расположения объекта под курсором
     def place_terrain_object(self, object):
         self.__terrain[self.cursor.y][self.cursor.x] = ObjectFactory.CreateObject(object)
