@@ -5,9 +5,11 @@ class Base():
 
     __units = []
     __symbol = "B"
-    
+    __max_unit_amount = 4
+
     def recruit_unit(self, unit):
-        self.__units.append(UnitFactory.CreateUnit(unit))
+        if (len(self.__units) < self.__max_unit_amount):
+            self.__units.append(UnitFactory.CreateUnit(unit))
 
     def remove_unit(self):
         return self.__units.pop()
@@ -15,7 +17,7 @@ class Base():
     def print_base_units(self):
         if(len(self.__units) != 0):
             i = 1
-            print("Гарнизон:")
+            print("Гарнизон:\n" + str(len(self.__units)) + "/" + str(self.__max_unit_amount))
             for unit in self.__units:
                 print(str(i) +". "+ unit.name)
                 i = i + 1

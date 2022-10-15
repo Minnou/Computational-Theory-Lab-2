@@ -1,10 +1,55 @@
 from time import sleep
 from res.board import Board
-from res.field import Field
-from res.unit import Unit
+from res.terrain.field import Field
+from res.units.unit import Unit
 import keyboard
 from res.unit_enum_factory import Units
 from res.player_base import Base
+from res.object_enum_factory import Objects
+
+def size_param():
+    a = (int)(input())
+    if a < 3:
+        print("Число должно быть больше трёх")
+        size_param()
+    else:
+        return a
+
+def ter_param(width,height):
+    z = (int)(input())
+    if z > width*height/4:
+        print("Число должно быть меньше " + (str)(width*height/4))
+        ter_param(width,height)
+    if z <= 0:
+        print("Число должно быть больше 0")
+        ter_param(width,height)
+    return z
+
+def generate():
+    print("Желаете загрузить поле?[y/n]")
+    answer = input()
+    if(answer == "y" or answer == "yes"):
+        return Board.load_board()
+    print("Введите размер поля по горизонтали")
+    width = size_param()
+    print("Введите размер поля по вертикали")
+    height = size_param()
+    print("Введите количество болот")
+    swamp = ter_param(width,height)
+    print("Введите количество гор")
+    mountains = ter_param(width,height)
+    print("Введите количество деревьев")
+    tree = ter_param(width,height)
+    print("Введите количество камней")
+    stone = ter_param(width,height)
+    print("Введите количество брёвен")
+    log = ter_param(width,height)
+    board = Board(height,width,Field(),swamp,mountains,tree,stone,log)
+    board.generate_board()
+    return board
+
+board = generate()
+board.display_board()
 
 def clear_console():
     print("\033[H\033[J", end="")
@@ -48,16 +93,48 @@ def base_control():
                         print(str(pos_unit.value) + ". " + pos_unit.name)
                     key = keyboard.read_key()
                     sleep(0.1)
-                    if len(Units._member_names_) >= int(key) and int(key) > 0:  
-                        board.base_recruit_unit(Units(int(key)))
+                    if(key.isdigit()):  
+                        if len(Units._member_names_) >= int(key) and int(key) > 0:  
+                            board.base_recruit_unit(Units(int(key)))
                 elif key == "q" or key =="й":
                     sleep(0.1)
                     break
 
-board = Board(20, 20,Field(),10, 7)
-board.generate_board()
+def place_objects():
+    while (True):
+        key = keyboard.read_key() 
+        if (key == "esc"):
+            sleep(0.2)
+            break
+        # Событие - нажатие клавиши "4", курсор двигается влево
+        elif key == "4":
+            board.move_cursor_left()
+        # Событие - нажатие клавиши "6", курсор двигается вправо 
+        elif key == "6":
+            board.move_cursor_right()
+        # Событие - нажатие клавиши "8", курсор двигается вверх 
+        elif key == "8":
+            board.move_cursor_up()
+        # Событие - нажатие клавиши "2", курсор двигается вниз
+        elif key == "2":
+            board.move_cursor_down()
+        elif key == "enter":
+            sleep(0.1)
+            for pos_object in Objects:
+                print(str(pos_object.value) + ". " + pos_object.name)
+            key = keyboard.read_key()
+            sleep(0.1)
+            if(key.isdigit()):  
+                if len(Objects._member_names_) >= int(key) and int(key) > 0:  
+                    board.place_terrain_object(Objects(int(key)))
+        clear_console()
+        sleep(0.1)
+        board.display_board()
+        print("esc - закончить расстановку")
+
+place_objects()
+clear_console()
 board.display_board()
-print("m - сохранить поле\no - загрузить поле")
 while (True):
     key = keyboard.read_key() 
     if (key == "esc"):
@@ -80,7 +157,7 @@ while (True):
         if (isinstance(unit, Unit)):
             clear_console()
             board.display_board()
-            print("w - движение\ns - способность")
+            print("w - движение")
             key = keyboard.read_key()
             # Событие - нажатие клавиши "w", берём контроль над юнитом
             if key == "w" or key == "ц":
@@ -95,4 +172,4 @@ while (True):
     clear_console()
     sleep(0.1)
     board.display_board()
-    print("m - сохранить поле\no - загрузить поле")
+    print("m - сохранить поле\no - загрузить поле\nesc - закончить игру")

@@ -1,30 +1,34 @@
 from random import randint
-from res.spearmen import Spearmen
-from res.terrain import Terrain
-from res.field import Field
-from res.border import Border
-from res.swamp import Swamp
-from res.mountain import Mountain
+from res.terrain.border import Border
+from res.terrain.swamp import Swamp
+from res.terrain.mountain import Mountain
+from res.objects.tree import Wise_Mythical_Tree
+from res.objects.stone import Magic_Pebble
+from res.objects.log import Mighteous_Log
 from res.cursor import Cursor
-from res.unit import Unit
-from res.spearmen import Spearmen
 from res.player_base import Base
+from res.object_enum_factory import ObjectFactory
 import pickle
 
 
 class Board:
     __terrain = [[]] # слой объектов
     __units = [[]] # слой юнитов
-    __var_terrain = [Swamp(), Mountain()] # варианты объектов
-    __max_objects = [] # максимальное количество объектов
+    __var_terrain = [Swamp(), Mountain()] # варианты объектов ландшафта
+    __var_neutral = [Wise_Mythical_Tree(), Magic_Pebble(), Mighteous_Log()] # варианты нейтральных объектов
+    __max_terrain_objects = [] # максимальное количество объектов ландшафта
+    __max_neutral_objects = [] # максимальное количество нейтральных объектов
     __base = Base()
     #Конструктор класса
-    def __init__(self, height, width, landscape, max_swamps, max_mountains):
+    def __init__(self, height, width, landscape, max_swamps, max_mountains,max_tree,max_stone,max_log):
         self.__height = height
         self.__width = width
         self.__landscape = landscape
-        self.__max_objects.append(max_swamps)
-        self.__max_objects.append(max_mountains)
+        self.__max_terrain_objects.append(max_swamps)
+        self.__max_terrain_objects.append(max_mountains)
+        self.__max_neutral_objects.append(max_tree)
+        self.__max_neutral_objects.append(max_stone)
+        self.__max_neutral_objects.append(max_log)
         self.cursor = Cursor(1,1) # создание курсора
     
     #Геттеры высоты и ширины поля
@@ -48,11 +52,18 @@ class Board:
     #Метод расстановки нейтральных объектов на поле
     def __randomize_objects(self):
         cur_objects = [0] * len(self.__var_terrain) #Счётчик объектов каждого типа
-        s = sum(self.__max_objects) #сумма максимальных количеств объектов
+        s = sum(self.__max_terrain_objects) #сумма максимальных количеств объектов
         for i in range(s):
             index = randint(0, len(self.__var_terrain) - 1) #Выбираем объект из доступных
-            if((cur_objects[index] < self.__max_objects[index])): #Если позволяет максимальное количество, то ставим
+            if((cur_objects[index] < self.__max_terrain_objects[index])): #Если позволяет максимальное количество, то ставим
                 self.__terrain[randint(1,self.height)][randint(1,self.width)] = self.__var_terrain[index]
+                cur_objects[index] = cur_objects[index] + 1 #Увеличиваем счётчик
+        cur_objects = [0] * len(self.__var_neutral) #Счётчик объектов каждого типа
+        s = sum(self.__max_neutral_objects) #сумма максимальных количеств объектов
+        for i in range(s):
+            index = randint(0, len(self.__var_neutral) - 1) #Выбираем объект из доступных
+            if((cur_objects[index] < self.__max_neutral_objects[index])): #Если позволяет максимальное количество, то ставим
+                self.__terrain[randint(1,self.height)][randint(1,self.width)] = self.__var_neutral[index]
                 cur_objects[index] = cur_objects[index] + 1 #Увеличиваем счётчик
     
     #Методы передвижения курсора по полю
@@ -84,6 +95,7 @@ class Board:
             self.__units[y][x] = unit
             self.__units[self.cursor.y][self.cursor.x] = None
             self._move_cursor(x,y)
+            self.__terrain[y][x].change_unit(unit)
     
     def move_unit_left(self,unit):
         self._move_unit(unit,self.cursor.x - 1, self.cursor.y) 
@@ -125,8 +137,11 @@ class Board:
                         board = board + self.cursor.to_string()
             board = board + "\n"
         if not(self.__units[self.cursor.y][self.cursor.x] is None) and not(isinstance(self.__units[self.cursor.y][self.cursor.x], Base)):
-            board = board + "Юнит " + self.__units[self.cursor.y][self.cursor.x].name + " под курсором\n" 
+            unit = self.__units[self.cursor.y][self.cursor.x]
+            board = board + "Юнит " + unit.name + " под курсором\n"
+            board = board + unit.info_to_str() 
         print(board)
+    
     #методы сохранения и загрузки игррового поля
     def save_board(self):
         pickle.dump(self, open("saves/board.pickle", "wb"))
@@ -136,3 +151,6 @@ class Board:
         board = pickle.load(open("saves/board.pickle", "rb"))
         board.__base.load_base()
         return board
+    
+    def place_terrain_object(self, object):
+        self.__terrain[self.cursor.y][self.cursor.x] = ObjectFactory.CreateObject(object)
