@@ -17,6 +17,8 @@ class Objects(Enum):
 class ObjectFactory():
     @staticmethod
     def CreateObject(object):
+        if not(isinstance(object, Objects)):
+            raise ValueError("Объект должен быть из перечисления Objects!")
         if (object == Objects.Поле):
             return Field()
         if (object == Objects.Гора):

@@ -13,7 +13,7 @@ from res.object_enum_factory import Objects
 #Ввод параметра размера игрового поля
 def size_param():
     a = (int)(input())
-    if a < 3:
+    if a <= 3:
         print("Число должно быть больше трёх")
         size_param()
     else:

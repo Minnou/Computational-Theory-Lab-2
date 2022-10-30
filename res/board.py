@@ -10,6 +10,8 @@ from res.player_base import Base
 from res.object_enum_factory import ObjectFactory
 import pickle
 
+from res.terrain.terrain import Terrain
+
 
 class Board:
     __terrain = [[]] # слой объектов
@@ -21,6 +23,26 @@ class Board:
     __base = Base() #объект базы
     #Конструктор класса
     def __init__(self, height, width, landscape, max_swamps, max_mountains,max_tree,max_stone,max_log):
+        if not(isinstance(height, int)):
+            raise ValueError('Высота должна быть числом!')
+        if not(isinstance(width, int)):
+            raise ValueError('Ширина должна быть числом!')
+        if not(isinstance(landscape, Terrain)):
+            raise ValueError('Стандартный ландшафт должен быть объектом класса Terrain!')
+        if not(isinstance(max_swamps, int)):
+            raise ValueError('Количество болот должно быть числом!')
+        if not(isinstance(max_mountains, int)):
+            raise ValueError('Количетсво гор должно быть числом!')
+        if not(isinstance(max_tree, int)):
+            raise ValueError('Количетсво деревьев должно быть числом!')
+        if not(isinstance(max_stone, int)):
+            raise ValueError('Количетсво камней должно быть числом!')  
+        if not(isinstance(max_log, int)):
+            raise ValueError('Количетсво брёвен должно быть числом!')
+        if(height <= 3):
+            raise ValueError('Высота должна быть больше 3!')
+        if(width <= 3):
+            raise ValueError('Ширина должна быть больше 3!')
         self.__height = height #задаём высоту
         self.__width = width #ширину
         self.__landscape = landscape #стандартный объект ландшафта

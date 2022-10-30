@@ -17,6 +17,8 @@ class Units(Enum):
 class UnitFactory():
     @staticmethod
     def CreateUnit(unit):
+        if not(isinstance(unit, Units)):
+            raise ValueError("Юнит должен быть из перечисления Units!")
         if  (unit == Units.Копейщики):
             return Spearmen()
         if (unit == Units.Рыцари):
